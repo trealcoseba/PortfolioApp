@@ -92,6 +92,8 @@ st.markdown(
 # ---------------------------------------------------------
 if "feedback_list" not in st.session_state:
     st.session_state.feedback_list = []
+if "active_project_modal" not in st.session_state:
+    st.session_state.active_project_modal = None
 
 # ---------------------------------------------------------
 # 4. PERSONAL DATA
@@ -104,7 +106,7 @@ INSTITUTION = "Cebu Institute of Technology–University"
 EMAIL = "a.lemuelvincent@gmail.com"
 
 # ---------------------------------------------------------
-# 5. SIDEBAR
+# 5. SIDEBAR (Interactive Navigation)
 # ---------------------------------------------------------
 with st.sidebar:
     try:
@@ -136,6 +138,7 @@ with st.sidebar:
             "Projects & Ideas",
             "Contact",
         ],
+        index=0,
     )
 
     st.markdown("---")
@@ -175,27 +178,15 @@ with hero_col2:
     with metric1:
         st.metric("Graduation Milestone", "Top 8", "UC-METC, 2024")
     with metric2:
-        st.metric("Current Role", "CSS President", "CIT-U (2026)")
+        st.metric("Current Role", "CSS President", "CIT-U (Current)")
 
 st.markdown("---")
 
 # ---------------------------------------------------------
-# 7. TABS
+# 7. SECTION RENDERERS
 # ---------------------------------------------------------
-tab_bio, tab_leadership, tab_skills, tab_projects, tab_contact = st.tabs(
-    [
-        "📖 Autobiography",
-        "🤝 Leadership & Service",
-        "📊 Skills & Analytics",
-        "🚀 Projects & Ideas",
-        "✉️ Contact",
-    ]
-)
-
-# ---------------------------------------------------------
-# TAB 1: AUTOBIOGRAPHY
-# ---------------------------------------------------------
-with tab_bio:
+def render_autobiography():
+    st.header("📖 Autobiography & Background")
     about_col, values_col = st.columns([1.2, 1], gap="large")
 
     with about_col:
@@ -243,30 +234,12 @@ with tab_bio:
 
     st.subheader("Milestones Along the Way")
     timeline = [
-        (
-            "Elementary Years",
-            "Began participating in pupil government and developed an early interest in service and school involvement.",
-        ),
-        (
-            "Scouting & Youth Development",
-            "Built experience in scouting, teamwork, outdoor skills, and leadership. Earned the Outdoorsman Scout Rank and served as a Junior Outfit Adviser.",
-        ),
-        (
-            "Senior High School",
-            "Served in student leadership and student affairs roles at UC-METC, while maintaining a strong academic record.",
-        ),
-        (
-            "June 2024",
-            "Graduated Top 8 among 293 graduates of the UC-METC Basic Education Department, with high honors and leadership recognition.",
-        ),
-        (
-            "Computer Science at CIT-U",
-            "Continued my academic journey in computing while taking on greater responsibilities in student organizations and community-oriented initiatives.",
-        ),
-        (
-            "2026",
-            "Serving as President of the CIT-U Computer Students' Society and continuing to develop as a student, organizer, and future computing professional.",
-        ),
+        ("Elementary Years", "Began participating in pupil government and developed an early interest in service and school involvement."),
+        ("Scouting & Youth Development", "Built experience in scouting, teamwork, outdoor skills, and leadership. Earned the Outdoorsman Scout Rank and served as a Junior Outfit Adviser."),
+        ("Senior High School", "Served in student leadership and student affairs roles at UC-METC, while maintaining a strong academic record."),
+        ("June 2024", "Graduated Top 8 among 293 graduates of the UC-METC Basic Education Department, with high honors and leadership recognition."),
+        ("Computer Science at CIT-U", "Continued my academic journey in computing while taking on greater responsibilities in student organizations and community-oriented initiatives."),
+        ("2026", "Serving as President of the CIT-U Computer Students' Society and continuing to develop as a student, organizer, and future computing professional."),
     ]
     for heading, detail in timeline:
         with st.container(border=True):
@@ -281,18 +254,21 @@ with tab_bio:
             "spent with family and learning practical skills from the people around me."
         )
 
-# ---------------------------------------------------------
-# TAB 2: LEADERSHIP & SERVICE (Centered, Bold, Larger Org Names)
-# ---------------------------------------------------------
-with tab_leadership:
-    st.subheader("Leadership & Service Portfolio")
+def render_leadership():
+    st.header("🤝 Leadership & Service Portfolio")
     st.write(
         "A structured and verified record of my leadership journey across student government, "
         "academic societies, community organizations, and scouting."
     )
 
-    # 1. CURRENT LEADERSHIP POSITIONS (Strictly confirmed 6 roles)
-    st.markdown("#### 🌟 Current Leadership Positions")
+    # Interactive Search and Category Filter
+    search_col, filter_col = st.columns([2, 1])
+    with search_col:
+        search_query = st.text_input("🔍 Search positions or organizations:", placeholder="e.g. President, SSG, Rotaract...")
+    with filter_col:
+        selected_category = st.selectbox("Filter category:", ["All Roles", "Current Leadership", "Previous Experience", "Achievements"])
+
+    # Your exact verified leadership datasets
     current_leadership = [
         {"role": "President", "org": "CIT-U Computer Students’ Society (CSS)", "period": "Current"},
         {"role": "Chairperson", "org": "Supreme Student Government - Commission on Extracurricular Activities", "period": "Current"},
@@ -302,19 +278,6 @@ with tab_leadership:
         {"role": "Events and Logistics Officer", "org": "Social Impact Catalyst", "period": "Current"},
     ]
 
-    for item in current_leadership:
-        with st.container(border=True):
-            r_col, o_col = st.columns([1.1, 2])
-            with r_col:
-                st.markdown(f'<div class="role-title">{item["role"]}</div>', unsafe_allow_html=True)
-                st.markdown(f'<span class="badge-year">{item["period"]}</span>', unsafe_allow_html=True)
-            with o_col:
-                st.markdown(f'<div class="org-title">{item["org"]}</div>', unsafe_allow_html=True)
-
-    st.write("")
-
-    # 2. PREVIOUS POSITIONS AND ORGANIZATIONAL EXPERIENCE
-    st.markdown("#### 🏛️ Previous Positions and Organizational Experience")
     previous_positions = [
         {"role": "Committee Head, Committee on Logistics", "org": "CIT-U Computer Students’ Society", "period": "2025-2026"},
         {"role": "Project Head Coordinator", "org": "Supreme Student Government - Commission on Extracurricular Activities", "period": "2025-2026"},
@@ -332,45 +295,61 @@ with tab_leadership:
         {"role": "Councilor", "org": "Supreme Pupil Government (SPG)", "period": "2012–2014 and 2016–2017"},
     ]
 
-    for item in previous_positions:
-        with st.container(border=True):
-            r_col, o_col = st.columns([1.1, 2])
-            with r_col:
-                st.markdown(f'<div class="role-title">{item["role"]}</div>', unsafe_allow_html=True)
-                st.markdown(f'<span class="badge-year">{item["period"]}</span>', unsafe_allow_html=True)
-            with o_col:
-                st.markdown(f'<div class="org-title">{item["org"]}</div>', unsafe_allow_html=True)
+    def matches(item):
+        if not search_query.strip():
+            return True
+        q = search_query.lower()
+        return q in item["role"].lower() or q in item["org"].lower() or q in item["period"].lower()
 
-    st.write("")
+    # 1. Current Leadership
+    if selected_category in ["All Roles", "Current Leadership"]:
+        filtered_current = [item for item in current_leadership if matches(item)]
+        if filtered_current:
+            st.markdown("#### 🌟 Current Leadership Positions")
+            for item in filtered_current:
+                with st.container(border=True):
+                    r_col, o_col = st.columns([1.1, 2])
+                    with r_col:
+                        st.markdown(f'<div class="role-title">{item["role"]}</div>', unsafe_allow_html=True)
+                        st.markdown(f'<span class="badge-year">{item["period"]}</span>', unsafe_allow_html=True)
+                    with o_col:
+                        st.markdown(f'<div class="org-title">{item["org"]}</div>', unsafe_allow_html=True)
+            st.write("")
 
-    # 3. ACHIEVEMENTS & RECOGNITION
-    st.markdown("#### ⚜️ Achievements & Scouting Honors")
-    with st.container(border=True):
-        sc_col1, sc_col2 = st.columns([1.1, 2])
-        with sc_col1:
-            st.markdown('<div class="role-title">Outdoorsman Scout Rank</div>', unsafe_allow_html=True)
-            st.markdown('<span class="badge-year">2020</span>', unsafe_allow_html=True)
-        with sc_col2:
-            st.markdown('<div class="org-title">Boy Scouts of the Philippines</div>', unsafe_allow_html=True)
-            st.caption("<div style='text-align: center;'>Earned merit recognitions in outdoor leadership, survival craft, teamwork, and community service.</div>", unsafe_allow_html=True)
+    # 2. Previous Experience
+    if selected_category in ["All Roles", "Previous Experience"]:
+        filtered_previous = [item for item in previous_positions if matches(item)]
+        if filtered_previous:
+            st.markdown("#### 🏛️ Previous Positions and Organizational Experience")
+            for item in filtered_previous:
+                with st.container(border=True):
+                    r_col, o_col = st.columns([1.1, 2])
+                    with r_col:
+                        st.markdown(f'<div class="role-title">{item["role"]}</div>', unsafe_allow_html=True)
+                        st.markdown(f'<span class="badge-year">{item["period"]}</span>', unsafe_allow_html=True)
+                    with o_col:
+                        st.markdown(f'<div class="org-title">{item["org"]}</div>', unsafe_allow_html=True)
+            st.write("")
 
-# ---------------------------------------------------------
-# TAB 3: SKILLS & ANALYTICS (Meets Rubric: Chart + Numbers + Slider + Checkbox)
-# ---------------------------------------------------------
-with tab_skills:
-    st.subheader("Technical Competencies & Learning Index")
+    # 3. Achievements
+    if selected_category in ["All Roles", "Achievements"]:
+        if matches({"role": "Outdoorsman Scout Rank", "org": "Boy Scouts of the Philippines", "period": "2020"}):
+            st.markdown("#### ⚜️ Achievements & Scouting Honors")
+            with st.container(border=True):
+                sc_col1, sc_col2 = st.columns([1.1, 2])
+                with sc_col1:
+                    st.markdown('<div class="role-title">Outdoorsman Scout Rank</div>', unsafe_allow_html=True)
+                    st.markdown('<span class="badge-year">2020</span>', unsafe_allow_html=True)
+                with sc_col2:
+                    st.markdown('<div class="org-title">Boy Scouts of the Philippines</div>', unsafe_allow_html=True)
+                    st.caption("<div style='text-align: center;'>Earned merit recognitions in outdoor leadership, survival craft, teamwork, and community service.</div>", unsafe_allow_html=True)
+
+def render_skills():
+    st.header("📊 Technical Competencies & Learning Index")
     st.write(
         "To satisfy quantitative assessment standards, the dataset below benchmarks my "
         "self-evaluated confidence and relative project experience across core computing domains."
     )
-
-    slider_col, check_col = st.columns([2, 1])
-    with slider_col:
-        min_confidence = st.slider("Filter competencies by minimum confidence rating:", 50, 100, 65)
-    with check_col:
-        st.write("")
-        st.write("")
-        show_raw = st.checkbox("Show raw numerical data table", value=True)
 
     skills_data = [
         {"Skill": "Programming (Java, Python, C)", "Category": "Languages", "Confidence": 88, "Context": "Coursework and problem-solving exercises"},
@@ -381,17 +360,32 @@ with tab_skills:
         {"Skill": "Photography & Storytelling", "Category": "Creative", "Confidence": 90, "Context": "TreClicks visual brand"},
     ]
     skills_df = pd.DataFrame(skills_data)
+
+    # Interactive Controls
+    ctrl_col1, ctrl_col2, ctrl_col3 = st.columns([2, 1.5, 1])
+    with ctrl_col1:
+        min_confidence = st.slider("Filter competencies by minimum confidence rating:", 50, 100, 65)
+    with ctrl_col2:
+        available_categories = ["All Categories"] + sorted(list(set(skills_df["Category"].tolist())))
+        selected_cat = st.selectbox("Filter by Category:", available_categories)
+    with ctrl_col3:
+        st.write("")
+        st.write("")
+        show_raw = st.checkbox("Show raw table", value=True)
+
+    # Filter computation
     filtered_df = skills_df[skills_df["Confidence"] >= min_confidence]
+    if selected_cat != "All Categories":
+        filtered_df = filtered_df[filtered_df["Category"] == selected_cat]
 
     col_chart, col_tbl = st.columns([3, 2], gap="medium")
-    
     with col_chart:
         with st.container(border=True):
             st.markdown("##### 📈 Relative Competency Benchmark (Chart)")
             if not filtered_df.empty:
                 st.bar_chart(filtered_df.set_index("Skill")["Confidence"], color="#ff4b4b")
             else:
-                st.warning("No competencies match this threshold. Try adjusting the slider.")
+                st.warning("No competencies match this threshold. Try adjusting the slider or category filter.")
 
     with col_tbl:
         if show_raw:
@@ -414,11 +408,8 @@ with tab_skills:
             st.markdown("#### 3. Improve")
             st.write("Review user feedback, refactor, and build upon the fundamentals.")
 
-# ---------------------------------------------------------
-# TAB 4: PROJECTS (Meets Rubric: 3+ Projects with Title, Role, Tools, Outcome/Link)
-# ---------------------------------------------------------
-with tab_projects:
-    st.subheader("Projects & Applied Work")
+def render_projects():
+    st.header("🚀 Projects & Applied Work")
     st.write("Filter through projects and software initiatives using the dropdown selector.")
 
     project_filter = st.selectbox(
@@ -428,40 +419,52 @@ with tab_projects:
 
     projects = [
         {
+            "id": "flower",
             "title": "FlowerOrderSystem",
             "category": "Software Development",
             "role": "Lead Developer & UI Designer",
             "tools": "Java, JavaFX, OOP Principles, IntelliJ IDEA",
             "description": "An interactive desktop application for cataloging, selecting, and processing floral product orders with structured state management.",
             "outcome": "Successfully built and demonstrated as an end-of-term Object-Oriented Software project.",
-            "link_text": "GitHub Repository ↗"
+            "details": "Includes full order billing calculations, inventory status validation, responsive UI forms built with JavaFX, and object-oriented models.",
+            "button_label": "Inspect Project Architecture ↗",
+            "repo_url": "https://github.com"
         },
         {
+            "id": "skillswap",
             "title": "SkillSwap Platform Concept",
             "category": "Software Development",
             "role": "Product Designer & Co-Developer",
             "tools": "Python, Relational DB (SQL), Streamlit Prototype",
             "description": "An application architecture centered on peer-to-peer student skill sharing, helping university students exchange knowledge and technical tutoring.",
             "outcome": "Drafted system architecture and functional MVP workflow ready for pilot testing.",
-            "link_text": "View Architecture Specs ↗"
+            "details": "Features student profile matching, relational scheduling models, user feedback rating schemas, and a prototype web interface.",
+            "button_label": "Inspect System Specs ↗",
+            "repo_url": "https://github.com"
         },
         {
+            "id": "css_programs",
             "title": "CIT-U CSS Organizational Programs",
             "category": "Organizational Leadership",
             "role": "President & Executive Coordinator",
             "tools": "Leadership, Strategic Planning, Event Operations, Community Outreach",
             "description": "Spearheaded student activities, technical workshops, and welfare initiatives tailored for Computer Studies students at CIT-U.",
             "outcome": "Coordinated multiple departmental events engaging hundreds of tech students in 2026.",
-            "link_text": "CSS Organization Portal ↗"
+            "details": "Manages committee execution, cross-departmental administrative relations, student engagement campaigns, and logistics planning.",
+            "button_label": "Inspect Leadership Highlights ↗",
+            "repo_url": "https://facebook.com"
         },
         {
+            "id": "treclicks",
             "title": "TreClicks Creative Storytelling",
             "category": "Creative Work",
             "role": "Creative Director & Lead Photographer",
             "tools": "Digital Photography, Adobe Lightroom, Visual Storytelling",
             "description": "Creative visual identity with the tagline “Capturing stories in every frame,” focusing on student event documentation and portraits.",
             "outcome": "Covered multiple major campus events and published visual documentation series.",
-            "link_text": "View Portfolio Gallery ↗"
+            "details": "Covers high-speed live event capture, portrait composition, post-production color grading, and public visual relations.",
+            "button_label": "Inspect Creative Portfolio ↗",
+            "repo_url": "https://instagram.com"
         },
     ]
 
@@ -480,13 +483,26 @@ with tab_projects:
             with p_right:
                 st.markdown(f"**Role:** {p['role']}")
                 st.info(f"🎯 **Outcome:** {p['outcome']}")
-                st.button(p["link_text"], key=f"btn_{p['title']}")
+                
+                # Interactive button toggles live inspection drawer
+                if st.button(p["button_label"], key=f"btn_{p['id']}", use_container_width=True):
+                    st.session_state.active_project_modal = p["id"]
 
-# ---------------------------------------------------------
-# TAB 5: CONTACT & FEEDBACK FORM
-# ---------------------------------------------------------
-with tab_contact:
-    st.subheader("Get in Touch")
+        # When clicked, display details drawer
+        if st.session_state.active_project_modal == p["id"]:
+            with st.container(border=True):
+                st.success(f"🔍 **Active Inspection: {p['title']}**")
+                st.write(p["details"])
+                modal_col1, modal_col2 = st.columns([1, 4])
+                with modal_col1:
+                    st.link_button("Open External Link ↗", p["repo_url"], use_container_width=True)
+                with modal_col2:
+                    if st.button("✖ Close Inspection Panel", key=f"close_{p['id']}"):
+                        st.session_state.active_project_modal = None
+                        st.rerun()
+
+def render_contact():
+    st.header("✉️ Get in Touch")
     st.write(
         "For academic conversations, student initiatives, creative work, or collaborations, feel free to reach out."
     )
@@ -510,7 +526,7 @@ with tab_contact:
                 )
                 message = st.text_area("Message *", height=120)
                 submitted = st.form_submit_button(
-                    "Submit Message",
+                    "🚀 Submit Message",
                     use_container_width=True,
                 )
 
@@ -540,10 +556,11 @@ with tab_contact:
             st.write(f"**Institution:** {INSTITUTION}")
             st.write(f"**Email:** {EMAIL}")
             st.markdown("---")
+            st.link_button("📧 Send Email Directly", f"mailto:{EMAIL}", use_container_width=True)
             st.caption("Active in student leadership and community service at CIT-U.")
 
     if st.session_state.feedback_list:
-        with st.expander("View feedback submitted during this session"):
+        with st.expander("📥 View feedback submitted during this session"):
             st.dataframe(
                 pd.DataFrame(st.session_state.feedback_list),
                 use_container_width=True,
@@ -551,7 +568,42 @@ with tab_contact:
             )
 
 # ---------------------------------------------------------
-# 8. FOOTER
+# 8. VIEW CONTROLLER (Sidebar Radio Routing)
+# ---------------------------------------------------------
+if section_focus == "Autobiography":
+    render_autobiography()
+elif section_focus == "Leadership & Service":
+    render_leadership()
+elif section_focus == "Skills & Analytics":
+    render_skills()
+elif section_focus == "Projects & Ideas":
+    render_projects()
+elif section_focus == "Contact":
+    render_contact()
+else:
+    # "All Sections" -> Multi-tab view
+    tab_bio, tab_leadership, tab_skills, tab_projects, tab_contact = st.tabs(
+        [
+            "📖 Autobiography",
+            "🤝 Leadership & Service",
+            "📊 Skills & Analytics",
+            "🚀 Projects & Ideas",
+            "✉️ Contact",
+        ]
+    )
+    with tab_bio:
+        render_autobiography()
+    with tab_leadership:
+        render_leadership()
+    with tab_skills:
+        render_skills()
+    with tab_projects:
+        render_projects()
+    with tab_contact:
+        render_contact()
+
+# ---------------------------------------------------------
+# 9. FOOTER
 # ---------------------------------------------------------
 st.markdown("---")
 footer_col1, footer_col2 = st.columns([2, 1])
