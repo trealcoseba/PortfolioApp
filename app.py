@@ -5,29 +5,32 @@ import pandas as pd
 # 1. PAGE CONFIGURATION
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="Lemuel Vincent Alcoseba III Portfolio",
+    page_title="Tre Alcoseba | CSIT 349 Portfolio",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ---------------------------------------------------------
-# 2. CUSTOM CSS
+# 2. THEME-AWARE CUSTOM CSS (Adapts to Dark & Light Modes)
 # ---------------------------------------------------------
 st.markdown(
     """
     <style>
+    /* Metric Cards - Adaptive background & border */
     div[data-testid="stMetric"] {
-        background-color: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: var(--secondary-background-color);
+        border: 1px solid rgba(128, 128, 128, 0.2);
         padding: 14px;
         border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
+    
+    /* Tech Pill Badges */
     .tech-pill {
         display: inline-block;
-        background: rgba(255, 75, 75, 0.15);
-        color: #ff6b6b;
+        background: rgba(255, 75, 75, 0.12);
+        color: #e03131;
         border: 1px solid rgba(255, 75, 75, 0.3);
         padding: 3px 10px;
         border-radius: 14px;
@@ -36,40 +39,46 @@ st.markdown(
         margin-right: 6px;
         margin-bottom: 6px;
     }
+    
+    /* Status Badge */
     .status-badge {
         display: inline-block;
         background: rgba(46, 213, 115, 0.15);
-        color: #2ed573;
+        color: #20bf6b;
         border: 1px solid rgba(46, 213, 115, 0.3);
         padding: 3px 12px;
         border-radius: 20px;
         font-size: 0.85rem;
         font-weight: 600;
     }
+    
+    /* Adaptive Year Badges */
     .badge-year {
         display: inline-block;
-        background: rgba(255, 255, 255, 0.08);
-        color: #f1f2f6;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(128, 128, 128, 0.12);
+        color: var(--text-color);
+        border: 1px solid rgba(128, 128, 128, 0.25);
         padding: 3px 12px;
         border-radius: 8px;
         font-size: 0.85rem;
-        font-weight: 500;
+        font-weight: 600;
         margin-top: 4px;
     }
-    /* Enhanced typography for Leadership Cards */
+    
+    /* Adaptive Role Title (Dark text in Light Mode, White text in Dark Mode) */
     .role-title {
         font-size: 1.25rem;
         font-weight: 700;
-        color: #ffffff;
+        color: var(--text-color) !important;
         line-height: 1.3;
         margin-bottom: 4px;
     }
-    /* Centered, Bold, and Much Larger Organization Name */
+    
+    /* Adaptive Centered Organization Name */
     .org-title {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         font-weight: 700;
-        color: #ffffff;
+        color: var(--text-color) !important;
         line-height: 1.35;
         text-align: center;
         display: flex;
@@ -77,10 +86,11 @@ st.markdown(
         justify-content: center;
         min-height: 60px;
     }
+    
     div[data-testid="stSidebar"] img {
         border-radius: 16px;
         border: 2px solid rgba(255, 75, 75, 0.4);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
     </style>
     """,
@@ -268,23 +278,22 @@ def render_leadership():
     with filter_col:
         selected_category = st.selectbox("Filter category:", ["All Roles", "Current Leadership", "Previous Experience", "Achievements"])
 
-    # Your exact verified leadership datasets
     current_leadership = [
-        {"role": "President", "org": "CIT-U Computer Students’ Society (CSS)", "period": "Current"},
-        {"role": "Chairperson", "org": "Supreme Student Government - Commission on Extracurricular Activities", "period": "Current"},
+        {"role": "President", "org": "CIT-U Computer Students’ Society", "period": "Current"},
+        {"role": "Chairperson", "org": "Commission on Extracurricular Activities, Supreme Student Government", "period": "Current"},
         {"role": "Vice President", "org": "Wildcats Esports League", "period": "Current"},
         {"role": "Chief Human Resource Officer", "org": "Google Developers Group on Campus", "period": "Current"},
         {"role": "Youth Service Director", "org": "Rotaract Club of Metro Cebu – CIT Chapter", "period": "Current"},
         {"role": "Events and Logistics Officer", "org": "Social Impact Catalyst", "period": "Current"},
+        {"role": "Member", "org": "Committee on Facility Management and Reception, Honor Society", "period": "2024–present"},
     ]
 
     previous_positions = [
-        {"role": "Committee Head, Committee on Logistics", "org": "CIT-U Computer Students’ Society", "period": "2025-2026"},
-        {"role": "Project Head Coordinator", "org": "Supreme Student Government - Commission on Extracurricular Activities", "period": "2025-2026"},
-        {"role": "Member, Committee on Facility Management and Reception", "org": "Honor Society", "period": "2024–present"},
+        {"role": "Committee Head", "org": "Committee on Logistics, CIT-U Computer Students’ Society", "period": "2025-2026"},
+        {"role": "Project Head Coordinator", "org": "Commission on Extracurricular Activities, Supreme Student Government", "period": "2025-2026"},
         {"role": "Director for Recruitment", "org": "CIT-U Junior Jaycees", "period": "2025-2026"},
-        {"role": "Member, Club Service", "org": "Rotaract Club of Metro Cebu – CIT Chapter", "period": "2025-2026"},
-        {"role": "Member, Committee on Social Responsibility", "org": "CIT-U Computer Students’ Society", "period": "2024–2025"},
+        {"role": "Member", "org": "Club Service, Rotaract Club of Metro Cebu – CIT Chapter", "period": "2025-2026"},
+        {"role": "Member", "org": "Committee on Community and Social Responsibility, CIT-U Computer Students’ Society", "period": "2024–2025"},
         {"role": "Vice President–Internal", "org": "UC-METC Supreme Student Government", "period": "2023–2024"},
         {"role": "Marshall", "org": "Student Affairs Office, UC-METC", "period": "2023–2024"},
         {"role": "Public Relations Officer", "org": "Community Awareness, Relations & Extension Services (C.A.R.E.S.), UC-METC", "period": "2022–2024"},
@@ -484,11 +493,9 @@ def render_projects():
                 st.markdown(f"**Role:** {p['role']}")
                 st.info(f"🎯 **Outcome:** {p['outcome']}")
                 
-                # Interactive button toggles live inspection drawer
                 if st.button(p["button_label"], key=f"btn_{p['id']}", use_container_width=True):
                     st.session_state.active_project_modal = p["id"]
 
-        # When clicked, display details drawer
         if st.session_state.active_project_modal == p["id"]:
             with st.container(border=True):
                 st.success(f"🔍 **Active Inspection: {p['title']}**")
@@ -520,7 +527,7 @@ def render_contact():
                     [
                         "General inquiry",
                         "Academic collaboration",
-                        "CSS Student Society",
+                        "Leadership Experiences",
                         "TreClicks Photography",
                     ],
                 )
@@ -532,7 +539,7 @@ def render_contact():
 
                 if submitted:
                     if not sender_name.strip() or not sender_email.strip() or not message.strip():
-                        st.error("Please complete all required fields.")
+                        st.error("Please complete all required fields marked with *.")
                     elif "@" not in sender_email or "." not in sender_email.split("@")[-1]:
                         st.error("Please enter a valid email address.")
                     else:
@@ -581,7 +588,6 @@ elif section_focus == "Projects & Ideas":
 elif section_focus == "Contact":
     render_contact()
 else:
-    # "All Sections" -> Multi-tab view
     tab_bio, tab_leadership, tab_skills, tab_projects, tab_contact = st.tabs(
         [
             "📖 Autobiography",
