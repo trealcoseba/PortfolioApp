@@ -294,8 +294,8 @@ with tab_leadership:
     # 1. CURRENT LEADERSHIP POSITIONS (Strictly confirmed 6 roles)
     st.markdown("#### 🌟 Current Leadership Positions")
     current_leadership = [
-        {"role": "President", "org": "CIT-U Computer Students’ Society (CSS)", "period": "2026"},
-        {"role": "Chairperson", "org": "Supreme Student Government - Commission on Extracurricular Activities", "period": "2026"},
+        {"role": "President", "org": "CIT-U Computer Students’ Society (CSS)", "period": "Current"},
+        {"role": "Chairperson", "org": "Supreme Student Government - Commission on Extracurricular Activities", "period": "Current"},
         {"role": "Vice President", "org": "Wildcats Esports League", "period": "Current"},
         {"role": "Chief Human Resource Officer", "org": "Google Developers Group on Campus", "period": "Current"},
         {"role": "Youth Service Director", "org": "Rotaract Club of Metro Cebu – CIT Chapter", "period": "Current"},
@@ -316,8 +316,8 @@ with tab_leadership:
     # 2. PREVIOUS POSITIONS AND ORGANIZATIONAL EXPERIENCE
     st.markdown("#### 🏛️ Previous Positions and Organizational Experience")
     previous_positions = [
-        {"role": "Committee Head, Committee on Logistics", "org": "CIT-U Computer Students’ Society", "period": "Previous term"},
-        {"role": "Project Head Coordinator", "org": "Supreme Student Government - Commission on Extracurricular Activities", "period": "Previous term"},
+        {"role": "Committee Head, Committee on Logistics", "org": "CIT-U Computer Students’ Society", "period": "2025-2026"},
+        {"role": "Project Head Coordinator", "org": "Supreme Student Government - Commission on Extracurricular Activities", "period": "2025-2026"},
         {"role": "Member, Committee on Facility Management and Reception", "org": "Honor Society", "period": "2024–present"},
         {"role": "Director for Recruitment", "org": "CIT-U Junior Jaycees", "period": "2025-2026"},
         {"role": "Member, Club Service", "org": "Rotaract Club of Metro Cebu – CIT Chapter", "period": "2025-2026"},
