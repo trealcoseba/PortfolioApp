@@ -5,7 +5,7 @@ import pandas as pd
 # 1. PAGE CONFIGURATION
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="Tre Alcoseba | CSIT 349 Portfolio",
+    page_title="Lemuel Vincent Alcoseba III Portfolio",
     page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded",
